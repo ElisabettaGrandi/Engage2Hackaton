@@ -1,6 +1,16 @@
 import pandas as pd
 import numpy as np
 
+EXCLUDED_COLS = [
+    "sample_id",
+    "row_index",
+    "target_index",
+    "session",
+    "atco",
+    "timestamp",
+    "task_name"
+]
+
 def preprocess_memory_efficient(df):
 
     # 1. Conversione di task_index in categoria
@@ -25,17 +35,8 @@ def preprocess_memory_efficient(df):
     qid_train = df['sample_id']
 
     # 6. Eliminazione delle colonne non utilizzate
-    excluded_cols = [
-        'sample_id',
-        'row_index',
-        'target_index',
-        'session',
-        'atco',
-        'timestamp',
-        'task_name'
-    ]
 
-    X_train = df.drop(columns=excluded_cols)
+    X_train = df.drop(columns=EXCLUDED_COLS)
 
     return X_train, y_train, qid_train
 
@@ -58,13 +59,6 @@ def preprocess_test(df):
     qid_test = df["sample_id"]
     row_indices = df["row_index"]
 
-    excluded_cols = [
-        "sample_id", "row_index", "target_index",
-        "session", "atco",  "task_name", "aircraft", "aircraft_id"
-    ]
-
-    #"timestamp",
-
-    X_test = df.drop(columns=excluded_cols, errors="ignore")
+    X_test = df.drop(columns=EXCLUDED_COLS, errors="ignore")
 
     return X_test, qid_test, row_indices

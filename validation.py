@@ -1,5 +1,5 @@
 import pandas as pd
-from xgboost import XGBRanker
+from xgboost import XGBRanker, XGBClassifier
 from preprocessing import preprocess_memory_efficient
 
 # 1. Caricamento del dataset di validation
@@ -12,11 +12,13 @@ X_val, y_val, qid_val = preprocess_memory_efficient(df)
 row_indices = df.sort_values("sample_id")["row_index"].to_numpy()
 
 # 4. Caricamento del modello già addestrato
-model = XGBRanker()
-model.load_model("lambdamart_model.json")
+model = XGBClassifier()
+#model = XGBRanker()
+model.load_model("xgboost_classifier.json")#xgboost_classifier.json  lambdamart_model.json
 
 # 5. Predizione: uno score per ogni task
-scores = model.predict(X_val)
+#scores = model.predict(X_val)
+scores = model.predict_proba(X_val)[:, 1]
 
 # 6. Associamo ogni score al rispettivo task e snapshot
 results = pd.DataFrame({

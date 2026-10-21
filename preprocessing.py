@@ -40,3 +40,31 @@ def preprocess_memory_efficient(df):
     return X_train, y_train, qid_train
 
 
+def preprocess_test(df):
+    df = df.copy()
+
+    df["task_index"] = df["task_index"].astype("category")
+
+    float_cols = df.select_dtypes(include=["float64"]).columns
+    df[float_cols] = df[float_cols].astype("float32")
+
+    int_cols = df.select_dtypes(include=["int64"]).columns
+    for c in int_cols:
+        if c not in ["sample_id", "row_index"]:
+            df[c] = df[c].astype("int32")
+
+    df = df.sort_values("sample_id").reset_index(drop=True)
+
+    qid_test = df["sample_id"]
+    row_indices = df["row_index"]
+
+    excluded_cols = [
+        "sample_id", "row_index", "target_index",
+        "session", "atco",  "task_name", "aircraft", "aircraft_id"
+    ]
+
+    #"timestamp",
+
+    X_test = df.drop(columns=excluded_cols, errors="ignore")
+
+    return X_test, qid_test, row_indices
